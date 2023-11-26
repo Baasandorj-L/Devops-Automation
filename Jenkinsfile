@@ -1,37 +1,34 @@
 pipeline {
     agent any
     tools{
-        maven 'maven_3_5_0'
+        maven 'maven_3_9_5'
     }
     stages{
         stage('Build Maven'){
             steps{
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Java-Techie-jt/devops-automation']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Baasandorj-L/Devops-Automation.git']]])
                 bat 'mvn clean install'
             }
         }
         stage('Build docker image'){
             steps{
                 script{
-                    bat 'docker build -t Baasandorj-L/devops-integration .'
+                    bat 'docker build -t baasandorj3036/devops-integration .'
                 }
             }
         }
         stage('Push image to Hub'){
             steps{
                 script{
-                   withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
-                   bat 'docker login -u Baasandorj-L -p ${dockerhubpwd}'
-
-}
-                   bat 'docker push Baasandorj-L/devops-integration'
+                   bat 'docker login -u baasandorj3036 -p 123456789'
+                   bat 'docker push baasandorj3036/devops-integration'
                 }
             }
         }
         stage('Deploy to k8s'){
             steps{
                 script{
-                    kubernetesDeploy (configs: 'deploymentservice.yaml',kubeconfigId: 'k8sconfigpwd')
+                   bat 'docker login -u baasandorj3036 -p 123456789' 
                 }
             }
         }
